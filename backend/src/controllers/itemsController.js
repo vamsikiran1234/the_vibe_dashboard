@@ -6,7 +6,11 @@ const getItems = (req, res) => {
 
     // If no query, return all items
     if (!q || q.trim() === '') {
-      return res.json(items);
+      return res.status(200).json({
+        success: true,
+        count: items.length,
+        data: items
+      });
     }
 
     // Filter by name or category (case insensitive)
@@ -16,9 +20,18 @@ const getItems = (req, res) => {
       item.category.toLowerCase().includes(searchTerm)
     );
 
-    res.json(filteredItems);
+    return res.status(200).json({
+      success: true,
+      count: filteredItems.length,
+      query: q,
+      data: filteredItems
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Server error', message: error.message });
+    return res.status(500).json({
+      success: false,
+      error: 'Server error',
+      message: error.message
+    });
   }
 };
 

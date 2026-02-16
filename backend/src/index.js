@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const itemsRoutes = require('./routes/itemsRoutes');
+const { notFound, errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
 
@@ -12,11 +13,19 @@ app.use(express.json());
 
 // Test Route
 app.get('/', (req, res) => {
-  res.json({ message: 'Vibe Dashboard API Running 🚀' });
+  res.status(200).json({ 
+    success: true,
+    message: 'Vibe Dashboard API Running 🚀',
+    version: '1.0.0'
+  });
 });
 
 // API Routes
 app.use('/api', itemsRoutes);
+
+// Error Handling Middlewares
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
