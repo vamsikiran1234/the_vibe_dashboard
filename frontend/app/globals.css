@@ -38,7 +38,7 @@ body {
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -46,19 +46,34 @@ body {
   }
 }
 
-@keyframes bounce-slow {
+@keyframes pulse-soft {
   0%, 100% {
-    transform: translateY(0);
+    opacity: 0.1;
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-8px);
+    opacity: 0.2;
+    transform: scale(1.05);
   }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.4s ease-out;
+  animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+.fill-mode-both {
+  animation-fill-mode: both;
+}
+
+/* Custom shadow utilities for extra depth */
+.shadow-premium {
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.03), 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-premium-hover {
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.05), 0 15px 40px rgba(0, 0, 0, 0.03);
 }

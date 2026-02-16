@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-// Create Axios instance with base configuration
+/**
+ * Axios instance with base configuration
+ * Configured with base URL, timeout, and default headers
+ */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
   timeout: 10000,
@@ -9,10 +12,13 @@ const api = axios.create({
   },
 });
 
-// Request interceptor (optional - for adding auth tokens, etc.)
+/**
+ * Request interceptor
+ * Can be used to add authentication tokens or modify requests
+ */
 api.interceptors.request.use(
   (config) => {
-    // You can add auth tokens here if needed
+    // Add auth tokens here if needed in the future
     return config;
   },
   (error) => {
@@ -20,14 +26,16 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor (optional - for handling errors globally)
+/**
+ * Response interceptor
+ * Handles errors globally and passes through successful responses
+ */
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    // Handle errors globally
-    console.error('API Error:', error.response?.data || error.message);
+    // Error handling is done at component level for better UX
     return Promise.reject(error);
   }
 );

@@ -5,13 +5,13 @@ interface EmptyStateProps {
 export default function EmptyState({ searchQuery }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-      <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-6">
+      <div className="w-16 h-16 bg-slate-50 border border-slate-100/50 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
         <svg
           className="w-8 h-8 text-slate-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth={2}
+          strokeWidth={1.5}
         >
           {searchQuery ? (
             <path
@@ -31,7 +31,7 @@ export default function EmptyState({ searchQuery }: EmptyStateProps) {
       <h3 className="text-[20px] font-[600] text-slate-900 mb-2">
         {searchQuery ? 'No items found' : 'No items available'}
       </h3>
-      <p className="text-[14px] font-[450] text-slate-600 text-center max-w-md mb-4 leading-relaxed">
+      <p className="text-[14px] font-[450] text-slate-500 text-center max-w-md mb-8 leading-relaxed">
         {searchQuery
           ? `No results match "${searchQuery}". Try adjusting your search terms.`
           : 'There are no items to display at the moment.'}
@@ -39,12 +39,21 @@ export default function EmptyState({ searchQuery }: EmptyStateProps) {
       
       {/* Search suggestions */}
       {searchQuery && (
-        <div className="mt-2 p-4 bg-slate-50 rounded-lg border border-slate-200 max-w-md">
-          <p className="text-[13px] font-[500] text-slate-700 mb-2">Search tips:</p>
-          <ul className="text-[13px] font-[450] text-slate-600 space-y-1 list-disc list-inside">
-            <li>Try different keywords</li>
-            <li>Check spelling</li>
-            <li>Use category names (Electronics, Fitness, Appliances)</li>
+        <div className="mt-2 p-6 bg-white/50 backdrop-blur-md rounded-2xl border border-white/80 max-w-md shadow-sm">
+          <p className="text-[14px] font-[600] text-slate-800 mb-3">Search tips:</p>
+          <ul className="text-[13px] font-[450] text-slate-500 space-y-2">
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-violet-400 rounded-full"></div>
+              Try different keywords
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-violet-400 rounded-full"></div>
+              Check spelling
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1 h-1 bg-violet-400 rounded-full"></div>
+              Use category names (Electronics, Fitness, etc.)
+            </li>
           </ul>
         </div>
       )}

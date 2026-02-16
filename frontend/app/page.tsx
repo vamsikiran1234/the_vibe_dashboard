@@ -9,24 +9,33 @@ import EmptyState from '@/components/EmptyState';
 import { getItems } from '@/services';
 import { Item } from '@/types/item';
 
+/**
+ * Home Page Component
+ * Main dashboard view with search functionality and item grid
+ */
 export default function Home() {
+  // State management
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<'network' | 'search' | 'unknown'>('unknown');
 
-  // Fetch items whenever searchQuery changes
+  /**
+   * Fetch items from API
+   * Triggers on mount and when searchQuery changes
+   */
   useEffect(() => {
     const fetchItems = async () => {
       try {
         setLoading(true);
         setError(null);
         setErrorType('unknown');
+        
         const data = await getItems(searchQuery || undefined);
         setItems(data);
       } catch (err: any) {
-        // Determine error type
+        // Determine error type for appropriate user messaging
         if (err.code === 'ERR_NETWORK' || err.message?.includes('Network Error')) {
           setErrorType('network');
           setError('Unable to connect to the server. Please ensure the backend is running on port 5000.');
@@ -40,7 +49,6 @@ export default function Home() {
           setErrorType('unknown');
           setError('An unexpected error occurred. Please try again.');
         }
-        console.error('Error fetching items:', err);
       } finally {
         setLoading(false);
       }
@@ -49,10 +57,17 @@ export default function Home() {
     fetchItems();
   }, [searchQuery]);
 
+  /**
+   * Handle search query updates from SearchBar component
+   */
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
+  /**
+   * Handle retry action from error state
+   * Resets search and error states
+   */
   const handleRetry = () => {
     setSearchQuery('');
     setError(null);
@@ -61,67 +76,78 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#fafbfc] relative overflow-hidden">
-      {/* Subtle layered background depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.03),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.02),transparent_50%)]" />
-      
-      {/* Main Container - Full Width */}
-      <div className="relative w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-12">
-        {/* Header */}
-        <header className="mb-16 text-center">
-          <h1 className="text-[42px] sm:text-[52px] lg:text-[62px] font-[650] tracking-tight text-slate-900 mb-3">
-            Vibe Dashboard
+      {/* Layered background with subtle gradients and mesh effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-200/20 blur-[120px] rounded-full animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-200/20 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+
+      {/* Main container with responsive padding */}
+      <div className="relative w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-16 sm:py-24">
+        {/* Header section */}
+        <header className="mb-20 text-center relative">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-violet-100/50 border border-violet-200/50 text-violet-600 text-[12px] font-[600] mb-6 tracking-wide uppercase animate-fade-in">
+            Premium Dashboard
+          </div>
+          <h1 className="text-[48px] sm:text-[64px] lg:text-[82px] font-[750] tracking-tight text-slate-900 mb-6 leading-[1.05]">
+            The <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-blue-600">Vibe</span> Dashboard
           </h1>
-          <p className="text-[15px] sm:text-[16px] text-slate-600 font-[450] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Discover amazing products with our modern, responsive dashboard
+          <p className="text-[16px] sm:text-[18px] text-slate-500 font-[450] max-w-2xl mx-auto mb-12 leading-relaxed">
+            Experience the next generation of product discovery with our meticulously crafted glassmorphism interface.
           </p>
 
-          {/* Search Bar */}
           <SearchBar onSearch={handleSearch} />
         </header>
 
-        {/* Content Area - Wider Layout */}
+        {/* Main content area */}
         <main className="w-full max-w-[1400px] mx-auto">
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.04)] p-8 sm:p-10 lg:p-12 border border-white/60">
-            {/* Results Count */}
+          <div className="bg-white/30 backdrop-blur-xl rounded-[24px] shadow-[0_20px_80px_rgba(0,0,0,0.03)] p-8 sm:p-12 lg:p-16 border border-white/60 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+            
+            {/* Results count - shown when data is loaded successfully */}
             {!loading && !error && (
-              <div className="mb-10 text-center">
-                <p className="text-[14px] text-slate-600 font-[500]">
-                  {searchQuery ? (
-                    <>
-                      Found <span className="font-[600] text-slate-900">{items.length}</span> items
-                      for "{searchQuery}"
-                    </>
-                  ) : (
-                    <>
-                      Showing <span className="font-[600] text-slate-900">{items.length}</span> items
-                    </>
-                  )}
+              <div className="mb-12 flex items-center justify-between border-b border-slate-100/50 pb-8">
+                <h2 className="text-[20px] font-[600] text-slate-900">
+                  {searchQuery ? 'Search Results' : 'Featured Items'}
+                </h2>
+                <p className="text-[14px] text-slate-500 font-[500] bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                  {items.length} {items.length === 1 ? 'item' : 'items'} found
                 </p>
               </div>
             )}
 
-            {/* Loading State */}
-            {loading && <LoadingSpinner />}
+            {/* Loading state */}
+            {loading && (
+              <div className="py-20 flex flex-col items-center justify-center">
+                <LoadingSpinner />
+                <p className="mt-4 text-slate-400 text-[14px] font-[450] animate-pulse">Syncing with database...</p>
+              </div>
+            )}
 
-            {/* Error State */}
-            {error && !loading && <ErrorMessage message={error} onRetry={handleRetry} type={errorType} />}
+            {/* Error state with retry functionality */}
+            {error && !loading && (
+              <div className="py-12">
+                <ErrorMessage message={error} onRetry={handleRetry} type={errorType} />
+              </div>
+            )}
 
-            {/* Empty State */}
-            {!loading && !error && items.length === 0 && <EmptyState searchQuery={searchQuery} />}
+            {/* Empty state - no items found */}
+            {!loading && !error && items.length === 0 && (
+              <div className="py-12">
+                <EmptyState searchQuery={searchQuery} />
+              </div>
+            )}
 
-            {/* Items Grid */}
+            {/* Items grid with staggered animation */}
             {!loading && !error && items.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {items.map((item, index) => (
                   <div
                     key={item.id}
                     style={{
-                      animationDelay: `${index * 0.04}s`,
-                      animationFillMode: 'both',
+                      animationDelay: `${index * 0.05}s`,
                     }}
-                    className="animate-fade-in"
+                    className="animate-fade-in fill-mode-both"
                   >
                     <ItemCard item={item} />
                   </div>
@@ -132,8 +158,15 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="mt-20 text-center text-slate-500 text-[13px] font-[450]">
-          <p>Built with Next.js, Tailwind CSS & Express</p>
+        <footer className="mt-24 text-center">
+          <div className="flex justify-center gap-8 mb-6">
+            <div className="h-px w-12 bg-slate-200 self-center" />
+            <div className="text-slate-400 text-[14px] font-[500]">THE VIBE</div>
+            <div className="h-px w-12 bg-slate-200 self-center" />
+          </div>
+          <p className="text-slate-400 text-[13px] font-[450]">
+            Built with Precision • Next.js 15 • Tailwind CSS 4
+          </p>
         </footer>
       </div>
     </div>

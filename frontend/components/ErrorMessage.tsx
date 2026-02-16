@@ -42,32 +42,39 @@ export default function ErrorMessage({ message, onRetry, type = 'unknown' }: Err
   const getBgColor = () => {
     switch (type) {
       case 'network':
-        return 'bg-red-50';
+        return 'bg-red-50 border-red-100';
       case 'search':
-        return 'bg-amber-50';
+        return 'bg-amber-50 border-amber-100';
       default:
-        return 'bg-red-50';
+        return 'bg-red-50 border-red-100';
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-      <div className={`w-16 h-16 ${getBgColor()} rounded-xl flex items-center justify-center mb-6`}>
+      <div className={`w-16 h-16 ${getBgColor()} border rounded-2xl flex items-center justify-center mb-6 shadow-sm`}>
         {getIcon()}
       </div>
-      <h3 className="text-[20px] font-[600] text-slate-900 mb-2">{getTitle()}</h3>
-      <p className="text-[14px] font-[450] text-slate-600 mb-6 text-center max-w-md leading-relaxed">{message}</p>
+      <h3 className="text-[22px] font-[650] text-slate-900 mb-2 tracking-tight">{getTitle()}</h3>
+      <p className="text-[15px] font-[450] text-slate-500 mb-8 text-center max-w-md leading-relaxed">{message}</p>
       
       {/* Additional help text for network errors */}
       {type === 'network' && (
-        <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200 max-w-md">
-          <p className="text-[13px] font-[450] text-slate-700 mb-2">
-            <span className="font-[600]">Quick fix:</span>
-          </p>
-          <ol className="text-[13px] font-[450] text-slate-600 space-y-1 list-decimal list-inside">
-            <li>Ensure backend server is running</li>
-            <li>Check if port 5000 is available</li>
-            <li>Verify API URL in .env.local</li>
+        <div className="mb-8 p-6 bg-white/50 backdrop-blur-md rounded-2xl border border-white/80 max-w-md shadow-sm">
+          <p className="text-[14px] font-[600] text-slate-800 mb-3">Quick fix guide:</p>
+          <ol className="text-[13px] font-[450] text-slate-500 space-y-2">
+            <li className="flex items-center gap-2">
+              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">1</span>
+              Ensure backend server is running
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">2</span>
+              Check if port 5000 is available
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">3</span>
+              Verify your network connection
+            </li>
           </ol>
         </div>
       )}
@@ -75,7 +82,7 @@ export default function ErrorMessage({ message, onRetry, type = 'unknown' }: Err
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors duration-200 text-[14px] font-[500] shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
+          className="px-6 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 active:scale-95 transition-all duration-200 text-[14px] font-[500] shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)]"
         >
           {type === 'network' ? 'Retry Connection' : 'Try Again'}
         </button>
