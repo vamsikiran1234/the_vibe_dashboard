@@ -1,15 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchBar from '@/components/SearchBar';
+import ItemCard from '@/components/ItemCard';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import ErrorMessage from '@/components/ErrorMessage';
+import EmptyState from '@/components/EmptyState';
+import { getItems } from '@/services';
+import { Item } from '@/types/item';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch items whenever searchQuery changes
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getItems(searchQuery || undefined);
+        setItems(data);
+      } catch (err) {
+        setError('Failed to fetch items. Please check if the backend server is running.');
+        console.error('Error fetching items:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [searchQuery]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log('Searching for:', query);
-    // API call will be added in next step
+  };
+
+  const handleRetry = () => {
+    setSearchQuery('');
   };
 
   return (
@@ -32,34 +62,41 @@ export default function Home() {
         {/* Content Area - Wider Layout */}
         <main className="w-full max-w-[1400px] mx-auto">
           <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-8 sm:p-12 lg:p-16 border border-white/20">
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-8 shadow-lg">
-                <svg
-                  className="w-12 h-12 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-4xl font-semibold text-gray-800 mb-4">
-                Search Component Ready
-              </h2>
-              <p className="text-gray-600 text-xl max-w-2xl mx-auto mb-4">
-                Try typing in the search bar above ✨
-              </p>
-              {searchQuery && (
-                <p className="text-purple-600 font-medium">
-                  Searching for: "{searchQuery}"
+            {/* Results Count */}
+            {!loading && !error && (
+              <div className="mb-8 text-center">
+                <p className="text-gray-600 text-lg">
+                  {searchQuery ? (
+                    <>
+                      Found <span className="font-bold text-purple-600">{items.length}</span> items
+                      for "{searchQuery}"
+                    </>
+                  ) : (
+                    <>
+                      Showing <span className="font-bold text-purple-600">{items.length}</span> items
+                    </>
+                  )}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && <LoadingSpinner />}
+
+            {/* Error State */}
+            {error && !loading && <ErrorMessage message={error} onRetry={handleRetry} />}
+
+            {/* Empty State */}
+            {!loading && !error && items.length === 0 && <EmptyState searchQuery={searchQuery} />}
+
+            {/* Items Grid */}
+            {!loading && !error && items.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {items.map((item) => (
+                  <ItemCard key={item.id} item={item} />
+                ))}
+              </div>
+            )}
           </div>
         </main>
 
