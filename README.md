@@ -1,166 +1,166 @@
 # Vibe Dashboard
 
-A modern, professional SaaS dashboard built with Next.js, Tailwind CSS, and Express. Features top 1% UI design quality with glassmorphism, refined typography, and intelligent error handling.
+A modern, professional SaaS dashboard built with Next.js, Tailwind CSS, and Express.js featuring glassmorphism design and intelligent search functionality.
 
-## 🎨 Design Philosophy
+## 📋 Project Overview
 
-This project follows design principles from industry leaders like Linear, Vercel, and Stripe:
-- **Controlled color use**: Slate for 95%, accent colors for 5%
-- **Precise typography**: Custom font weights (450, 500, 600, 650)
-- **Subtle effects**: Light glassmorphism, soft shadows (4-6% opacity)
-- **Professional spacing**: 8px rhythm throughout
-- **Fast transitions**: 200ms for snappy interactions
+Vibe Dashboard is a full-stack web application that displays a catalog of items with real-time search capabilities. The project demonstrates modern web development practices with a clean, responsive UI and a RESTful API backend.
 
-## 🚀 Features
+## 🏗️ Architecture
+
+The application follows a client-server architecture:
+
+- **Frontend**: Next.js 16 with App Router, running as a React-based SPA
+- **Backend**: Express.js REST API serving JSON data
+- **Communication**: Axios for HTTP requests with error handling
+- **State Management**: React hooks (useState, useEffect, useCallback)
+- **Styling**: Tailwind CSS 4 with custom design tokens
+
+```
+┌─────────────────┐         HTTP/REST        ┌─────────────────┐
+│                 │ ◄────────────────────────►│                 │
+│  Next.js Client │    GET /api/items?q=     │  Express Server │
+│                 │                           │                 │
+└─────────────────┘                           └─────────────────┘
+```
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 16** with App Router
-- **TypeScript** for type safety
-- **Tailwind CSS 4** for styling
-- **Axios** for API calls
-- **Debounced search** (300ms)
-- **Responsive design** (mobile-first)
-- **Glassmorphism UI** (light, refined)
-- **Error handling** (network, search, server errors)
-- **Loading states** with animations
-- **Empty states** with helpful tips
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type safety and better DX
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Axios** - HTTP client for API requests
+- **Geist Font** - Modern typography
 
 ### Backend
-- **Express.js** REST API
-- **CORS** enabled
-- **Environment variables** via dotenv
-- **Clean architecture** (routes, controllers, data)
-- **Search functionality** (name and category)
-- **Error handling** middleware
+- **Express.js** - Minimal Node.js web framework
+- **CORS** - Cross-origin resource sharing
+- **dotenv** - Environment variable management
+- **Nodemon** - Development auto-reload
 
-## 📁 Project Structure
+## 🚀 How to Run Backend
 
-```
-the_vibe_dashboard/
-├── backend/
-│   └── src/
-│       ├── controllers/      # Business logic
-│       ├── routes/           # API routes
-│       ├── data/             # Mock data
-│       ├── middlewares/      # Error handling
-│       └── index.js          # Server entry
-│
-└── frontend/
-    ├── app/
-    │   ├── page.tsx          # Main dashboard
-    │   ├── layout.tsx        # Root layout
-    │   ├── globals.css       # Global styles
-    │   └── design-system.css # Design tokens
-    ├── components/
-    │   ├── SearchBar.tsx     # Search input
-    │   ├── ItemCard.tsx      # Product card
-    │   ├── LoadingSpinner.tsx
-    │   ├── ErrorMessage.tsx
-    │   └── EmptyState.tsx
-    ├── services/
-    │   ├── api.ts            # Axios instance
-    │   └── itemService.ts    # API functions
-    └── types/
-        └── item.ts           # TypeScript types
-```
-
-## 🛠️ Installation
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Backend Setup
-
+1. Navigate to the backend directory:
 ```bash
 cd backend
-npm install
-npm run dev
 ```
 
-Server runs on `http://localhost:5000`
-
-### Frontend Setup
-
+2. Install dependencies:
 ```bash
-cd frontend
 npm install
-npm run dev
 ```
 
-App runs on `http://localhost:3000`
-
-## 🎯 Environment Variables
-
-### Backend
+3. Create a `.env` file (or use the existing one):
 ```env
 PORT=5000
 ```
 
-### Frontend
+4. Start the development server:
+```bash
+npm run dev
+```
+
+The backend will run on `http://localhost:5000`
+
+### Backend Scripts
+- `npm run dev` - Start with nodemon (auto-reload)
+- `npm start` - Start production server
+
+## 🎨 How to Run Frontend
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Create a `.env.local` file (or use the existing one):
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-## 📖 API Endpoints
-
-### GET /api/items
-Fetch all items or search by query
-
-**Query Parameters:**
-- `q` (optional): Search term for name or category
-
-**Response:**
-```json
-{
-  "success": true,
-  "count": 15,
-  "query": "electronics",
-  "data": [...]
-}
+4. Start the development server:
+```bash
+npm run dev
 ```
 
-## 🎨 Design System
+The frontend will run on `http://localhost:3000`
 
-### Color Palette
-- **Primary**: slate-900 (text)
-- **Secondary**: slate-600 (descriptions)
-- **Accent**: violet-500 (focus states, 5% max)
-- **Background**: #fafbfc (cool off-white)
+### Frontend Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-### Typography Scale
-- **Display**: 42-62px, font-[650], tracking-tight
-- **Heading**: 18-32px, font-[600]
-- **Body**: 13-16px, font-[450]
-- **Label**: 12-14px, font-[500]
+## 📸 Screenshots
 
-### Spacing (8px base)
-- xs: 4px, sm: 8px, md: 12px, lg: 16px
-- xl: 20px, 2xl: 24px, 3xl: 32px, 4xl: 40px
+> Add your screenshots here
 
-### Shadows
-- Subtle: `0 1px 2px rgba(0,0,0,0.04)`
-- Soft: `0 4px 16px rgba(0,0,0,0.04)`
-- Medium: `0 8px 32px rgba(0,0,0,0.04)`
+## 📁 Folder Structure
 
-See `frontend/DESIGN_SYSTEM.md` for complete guidelines.
+```
+vibe-dashboard/
+│
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   └── itemController.js    # Business logic for items
+│   │   ├── data/
+│   │   │   └── items.js             # Mock data
+│   │   ├── middlewares/
+│   │   │   └── errorHandler.js      # Error handling middleware
+│   │   ├── routes/
+│   │   │   └── itemRoutes.js        # API route definitions
+│   │   └── index.js                 # Express server entry point
+│   ├── .env                         # Environment variables
+│   ├── .env.example                 # Environment template
+│   ├── .gitignore                   # Git ignore rules
+│   ├── package.json                 # Dependencies and scripts
+│   └── package-lock.json
+│
+├── frontend/
+│   ├── app/
+│   │   ├── layout.tsx               # Root layout component
+│   │   ├── page.tsx                 # Main dashboard page
+│   │   └── globals.css              # Global styles
+│   ├── components/
+│   │   ├── Card.tsx                 # Reusable card component
+│   │   ├── Container.tsx            # Layout container
+│   │   ├── EmptyState.tsx           # No results state
+│   │   ├── ErrorMessage.tsx         # Error display component
+│   │   ├── ItemCard.tsx             # Product card component
+│   │   ├── LoadingSpinner.tsx       # Loading indicator
+│   │   └── SearchBar.tsx            # Search input component
+│   ├── hooks/
+│   │   └── useDebounce.ts           # Debounce hook for search
+│   ├── services/
+│   │   ├── api.ts                   # Axios instance configuration
+│   │   ├── itemService.ts           # Item API functions
+│   │   └── index.ts                 # Service exports
+│   ├── types/
+│   │   └── item.ts                  # TypeScript type definitions
+│   ├── .env.local                   # Local environment variables
+│   ├── .env.example                 # Environment template
+│   ├── .gitignore                   # Git ignore rules
+│   ├── next.config.ts               # Next.js configuration
+│   ├── tsconfig.json                # TypeScript configuration
+│   ├── tailwind.config.ts           # Tailwind CSS configuration
+│   ├── postcss.config.mjs           # PostCSS configuration
+│   ├── package.json                 # Dependencies and scripts
+│   └── package-lock.json
+│
+├── .gitignore                       # Root git ignore
+└── README.md                        # Project documentation
+```
 
-## 🔧 Error Handling
+---
 
-The app handles three error types:
-
-1. **Network Error**: Backend unreachable
-   - Shows troubleshooting steps
-   - "Retry Connection" button
-
-2. **Search Error**: 404 Not Found
-   - Clear error message
-   - "Try Again" button
-
-3. **Server Error**: 500+ status
-   - Generic error message
-   - "Try Again" button
-
+Built with Next.js, Tailwind CSS & Express.js
 See `frontend/ERROR_HANDLING.md` for details.
 
 ## 🧪 Testing
@@ -215,25 +215,6 @@ npm run lint   # Run ESLint
 - Empty: Helpful search tips
 - Success: Staggered grid animation
 
-## 🚀 Deployment
-
-### Backend
-Deploy to any Node.js hosting:
-- Heroku
-- Railway
-- Render
-- DigitalOcean
-
-### Frontend
-Deploy to Vercel (recommended):
-```bash
-vercel deploy
-```
-
-Or other platforms:
-- Netlify
-- Cloudflare Pages
-- AWS Amplify
 
 ## 📚 Documentation
 

@@ -1,17 +1,21 @@
 /**
  * LoadingSpinner Component
- * Displays animated spinner during data fetching
+ * Modern dark theme loading indicator
  */
 export default function LoadingSpinner() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-      {/* Animated spinner */}
-      <div className="relative w-16 h-16">
-        <div className="absolute top-0 left-0 w-full h-full border-[3px] border-slate-100/50 rounded-full"></div>
-        <div className="absolute top-0 left-0 w-full h-full border-[3px] border-violet-500 rounded-full border-t-transparent animate-spin"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-violet-500/10 rounded-full blur-md animate-pulse"></div>
+    <div className="flex flex-col items-center justify-center py-24">
+      {/* Spinner container */}
+      <div className="relative mb-6">
+        <div className="w-16 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(59,130,246,0.1)]">
+          <div className="w-10 h-10 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin" />
+        </div>
       </div>
-      <p className="mt-6 text-slate-500 text-[15px] font-[500] tracking-tight">Updating dashboard...</p>
+
+      {/* Loading text */}
+      <p className="text-slate-400 font-medium text-sm animate-pulse">
+        Loading products...
+      </p>
     </div>
   );
 }

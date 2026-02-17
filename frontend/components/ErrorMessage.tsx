@@ -1,92 +1,89 @@
 interface ErrorMessageProps {
   message: string;
-  onRetry?: () => void;
+  onRetry: () => void;
   type?: 'network' | 'search' | 'unknown';
 }
 
 export default function ErrorMessage({ message, onRetry, type = 'unknown' }: ErrorMessageProps) {
   const getIcon = () => {
-    switch (type) {
-      case 'network':
-        return (
-          <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
-          </svg>
-        );
-      case 'search':
-        return (
-          <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        );
+    const iconClass = "w-10 h-10 transition-transform duration-300 group-hover:scale-110";
+
+    if (type === 'network') {
+      return (
+        <svg className={`${iconClass} text-red-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+        </svg>
+      );
     }
+
+    return (
+      <svg className={`${iconClass} text-amber-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+      </svg>
+    );
   };
 
   const getTitle = () => {
-    switch (type) {
-      case 'network':
-        return 'Connection Failed';
-      case 'search':
-        return 'Search Error';
-      default:
-        return 'Something went wrong';
-    }
-  };
-
-  const getBgColor = () => {
-    switch (type) {
-      case 'network':
-        return 'bg-red-50 border-red-100';
-      case 'search':
-        return 'bg-amber-50 border-amber-100';
-      default:
-        return 'bg-red-50 border-red-100';
-    }
+    if (type === 'network') return 'Connection Error';
+    if (type === 'search') return 'Search Failed';
+    return 'Something Went Wrong';
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-      <div className={`w-16 h-16 ${getBgColor()} border rounded-2xl flex items-center justify-center mb-6 shadow-sm`}>
-        {getIcon()}
+    <div className="flex flex-col items-center justify-center py-24">
+      {/* Icon container */}
+      <div className="relative mb-8 group">
+        <div className="w-20 h-20 bg-white/5 backdrop-blur-xl border border-red-500/20 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(239,68,68,0.1)] transition-all duration-300 group-hover:shadow-[0_12px_40px_rgba(239,68,68,0.2)] group-hover:border-red-500/30">
+          {getIcon()}
+        </div>
       </div>
-      <h3 className="text-[22px] font-[650] text-slate-900 mb-2 tracking-tight">{getTitle()}</h3>
-      <p className="text-[15px] font-[450] text-slate-500 mb-8 text-center max-w-md leading-relaxed">{message}</p>
-      
-      {/* Additional help text for network errors */}
+
+      {/* Title */}
+      <h3 className="text-2xl font-bold text-white mb-3">
+        {getTitle()}
+      </h3>
+
+      {/* Error message */}
+      <p className="text-base font-medium text-slate-400 text-center max-w-md mb-10 leading-relaxed">
+        {message}
+      </p>
+
+      {/* Additional help for network errors */}
       {type === 'network' && (
-        <div className="mb-8 p-6 bg-white/50 backdrop-blur-md rounded-2xl border border-white/80 max-w-md shadow-sm">
-          <p className="text-[14px] font-[600] text-slate-800 mb-3">Quick fix guide:</p>
-          <ol className="text-[13px] font-[450] text-slate-500 space-y-2">
-            <li className="flex items-center gap-2">
-              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">1</span>
-              Ensure backend server is running
+        <div className="mb-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 max-w-md shadow-[0_8px_32px_rgba(59,130,246,0.1)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(59,130,246,0.15)] hover:border-white/20">
+          <p className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+            <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Troubleshooting steps
+          </p>
+          <ol className="text-sm font-medium text-slate-400 space-y-3">
+            <li className="flex items-start gap-3 transition-all duration-200 hover:translate-x-1 hover:text-slate-300">
+              <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-xs font-bold text-slate-300">1</span>
+              <span>Ensure backend server is running</span>
             </li>
-            <li className="flex items-center gap-2">
-              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">2</span>
-              Check if port 5000 is available
+            <li className="flex items-start gap-3 transition-all duration-200 hover:translate-x-1 hover:text-slate-300">
+              <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-xs font-bold text-slate-300">2</span>
+              <span>Check if port 5000 is available</span>
             </li>
-            <li className="flex items-center gap-2">
-              <span className="w-5 h-5 flex items-center justify-center bg-slate-100 rounded-full text-[11px] font-[600]">3</span>
-              Verify your network connection
+            <li className="flex items-start gap-3 transition-all duration-200 hover:translate-x-1 hover:text-slate-300">
+              <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-xs font-bold text-slate-300">3</span>
+              <span>Verify your network connection</span>
             </li>
           </ol>
         </div>
       )}
 
-      {onRetry && (
-        <button
-          onClick={onRetry}
-          className="px-6 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 active:scale-95 transition-all duration-200 text-[14px] font-[500] shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)]"
-        >
-          {type === 'network' ? 'Retry Connection' : 'Try Again'}
-        </button>
-      )}
+      {/* Retry button */}
+      <button
+        onClick={onRetry}
+        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-semibold text-sm shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 active:scale-95 transition-all duration-300 flex items-center gap-2"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Try Again
+      </button>
     </div>
   );
 }

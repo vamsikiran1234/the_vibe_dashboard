@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import type { AxiosError } from 'axios';
 import SearchBar from '@/components/SearchBar';
 import ItemCard from '@/components/ItemCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -9,145 +10,122 @@ import EmptyState from '@/components/EmptyState';
 import { getItems } from '@/services';
 import { Item } from '@/types/item';
 
-/**
- * Home Page Component
- * Main dashboard view with search functionality and item grid
- */
 export default function Home() {
-  // State management
-  const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [errorType, setErrorType] = useState<'network' | 'search' | 'unknown'>('unknown');
 
-  /**
-   * Fetch items from API
-   * Triggers on mount and when searchQuery changes
-   */
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchItems = useCallback(async (query = '') => {
+    const trimmedQuery = query.trim();
+
+    try {
+      setLoading(true);
+      setError(null);
+      setErrorType('unknown');
+
+      const data = await getItems(trimmedQuery);
+      setItems(data);
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const statusCode = axiosError.response?.status;
+      const backendMessage = axiosError.response?.data?.message;
+      const fallbackMessage = axiosError.message || 'Failed to load items';
+
+      if (axiosError.code === 'ERR_NETWORK' || !axiosError.response) {
+        setErrorType('network');
+        setError('Unable to connect to the server. Please ensure the backend is running.');
+      } else if (statusCode === 404 && trimmedQuery) {
+        setErrorType('search');
+        setError(backendMessage || 'The requested resource was not found.');
+      } else if (statusCode && statusCode >= 500) {
         setErrorType('unknown');
-        
-        const data = await getItems(searchQuery || undefined);
-        setItems(data);
-      } catch (err: any) {
-        // Determine error type for appropriate user messaging
-        if (err.code === 'ERR_NETWORK' || err.message?.includes('Network Error')) {
-          setErrorType('network');
-          setError('Unable to connect to the server. Please ensure the backend is running on port 5000.');
-        } else if (err.response?.status === 404) {
-          setErrorType('search');
-          setError('The requested resource was not found.');
-        } else if (err.response?.status >= 500) {
-          setErrorType('unknown');
-          setError('Server error occurred. Please try again later.');
-        } else {
-          setErrorType('unknown');
-          setError('An unexpected error occurred. Please try again.');
-        }
-      } finally {
-        setLoading(false);
+        setError('Server error occurred. Please try again later.');
+      } else {
+        setErrorType('unknown');
+        setError(backendMessage || fallbackMessage);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    fetchItems();
-  }, [searchQuery]);
+  useEffect(() => {
+    void fetchItems();
+  }, [fetchItems]);
 
-  /**
-   * Handle search query updates from SearchBar component
-   */
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    void fetchItems(query);
   };
 
-  /**
-   * Handle retry action from error state
-   * Resets search and error states
-   */
   const handleRetry = () => {
-    setSearchQuery('');
-    setError(null);
-    setErrorType('unknown');
+    void fetchItems(searchQuery);
   };
 
   return (
-    <div className="min-h-screen bg-[#fafbfc] relative overflow-hidden">
-      {/* Layered background with subtle gradients and mesh effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30" />
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-200/20 blur-[120px] rounded-full animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-200/20 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Futuristic gradient overlays */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-indigo-900/20 via-transparent to-transparent" />
 
-      {/* Main container with responsive padding */}
-      <div className="relative w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-16 sm:py-24">
-        {/* Header section */}
-        <header className="mb-20 text-center relative">
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-violet-100/50 border border-violet-200/50 text-violet-600 text-[12px] font-[600] mb-6 tracking-wide uppercase animate-fade-in">
-            Premium Dashboard
+      {/* Animated gradient orbs */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-linear-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-linear-to-tr from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+
+      {/* Main container - CENTERED */}
+      <div className="relative w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-12 flex flex-col items-center">
+        {/* Header section - CENTERED */}
+        <header className="mb-20 w-full max-w-[1400px]">
+          <div className="flex items-center justify-between gap-6">
+            <h1 className="text-[42px] sm:text-[52px] lg:text-[62px] font-[650] tracking-tight bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Vibe Dashboard
+            </h1>
+            <SearchBar onSearch={handleSearch} />
           </div>
-          <h1 className="text-[48px] sm:text-[64px] lg:text-[82px] font-[750] tracking-tight text-slate-900 mb-6 leading-[1.05]">
-            The <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-blue-600">Vibe</span> Dashboard
-          </h1>
-          <p className="text-[16px] sm:text-[18px] text-slate-500 font-[450] max-w-2xl mx-auto mb-12 leading-relaxed">
-            Experience the next generation of product discovery with our meticulously crafted glassmorphism interface.
-          </p>
-
-          <SearchBar onSearch={handleSearch} />
         </header>
 
         {/* Main content area */}
-        <main className="w-full max-w-[1400px] mx-auto">
-          <div className="bg-white/30 backdrop-blur-xl rounded-[24px] shadow-[0_20px_80px_rgba(0,0,0,0.03)] p-8 sm:p-12 lg:p-16 border border-white/60 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-            
-            {/* Results count - shown when data is loaded successfully */}
+        <main className="w-full max-w-[1400px] mt-8 sm:mt-10">
+          <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] p-8 sm:p-10 lg:p-12 border border-white/10">
+            {/* Results count */}
             {!loading && !error && (
-              <div className="mb-12 flex items-center justify-between border-b border-slate-100/50 pb-8">
-                <h2 className="text-[20px] font-[600] text-slate-900">
-                  {searchQuery ? 'Search Results' : 'Featured Items'}
-                </h2>
-                <p className="text-[14px] text-slate-500 font-[500] bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                  {items.length} {items.length === 1 ? 'item' : 'items'} found
+              <div className="mb-10 text-center">
+                <p className="text-[14px] text-slate-400 font-[500]">
+                  {searchQuery ? (
+                    <>
+                      Found <span className="font-[600] text-white">{items.length}</span> items for &quot;{searchQuery}&quot;
+                    </>
+                  ) : (
+                    <>
+                      Showing <span className="font-[600] text-white">{items.length}</span> items
+                    </>
+                  )}
                 </p>
               </div>
             )}
 
             {/* Loading state */}
-            {loading && (
-              <div className="py-20 flex flex-col items-center justify-center">
-                <LoadingSpinner />
-                <p className="mt-4 text-slate-400 text-[14px] font-[450] animate-pulse">Syncing with database...</p>
-              </div>
-            )}
+            {loading && <LoadingSpinner />}
 
-            {/* Error state with retry functionality */}
-            {error && !loading && (
-              <div className="py-12">
-                <ErrorMessage message={error} onRetry={handleRetry} type={errorType} />
-              </div>
-            )}
+            {/* Error state */}
+            {error && !loading && <ErrorMessage message={error} onRetry={handleRetry} type={errorType} />}
 
-            {/* Empty state - no items found */}
-            {!loading && !error && items.length === 0 && (
-              <div className="py-12">
-                <EmptyState searchQuery={searchQuery} />
-              </div>
-            )}
+            {/* Empty state */}
+            {!loading && !error && items.length === 0 && <EmptyState searchQuery={searchQuery} />}
 
-            {/* Items grid with staggered animation */}
+            {/* Items grid - CENTERED */}
             {!loading && !error && items.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 justify-items-center">
                 {items.map((item, index) => (
                   <div
                     key={item.id}
                     style={{
-                      animationDelay: `${index * 0.05}s`,
+                      animationDelay: `${index * 0.04}s`,
+                      animationFillMode: 'both',
                     }}
-                    className="animate-fade-in fill-mode-both"
+                    className="animate-fade-in w-full"
                   >
                     <ItemCard item={item} />
                   </div>
@@ -157,16 +135,9 @@ export default function Home() {
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="mt-24 text-center">
-          <div className="flex justify-center gap-8 mb-6">
-            <div className="h-px w-12 bg-slate-200 self-center" />
-            <div className="text-slate-400 text-[14px] font-[500]">THE VIBE</div>
-            <div className="h-px w-12 bg-slate-200 self-center" />
-          </div>
-          <p className="text-slate-400 text-[13px] font-[450]">
-            Built with Precision • Next.js 15 • Tailwind CSS 4
-          </p>
+        {/* Footer - CENTERED */}
+        <footer className="mt-20 text-center text-slate-500 text-[13px] font-[450]">
+          <p>Built with Next.js, Tailwind CSS & Express</p>
         </footer>
       </div>
     </div>
